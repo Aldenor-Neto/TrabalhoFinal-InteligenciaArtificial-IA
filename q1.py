@@ -1,15 +1,15 @@
-import numpy as np
+import os
 import torch
+import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
-import os
 from sklearn.metrics import mean_squared_error
 
-# Gerando os dados sintéticos
 np.random.seed(42)
 torch.manual_seed(42)
 
+# Gerando os dados sintéticos
 N = 100
 x = np.random.uniform(-10, 10, N)  # Distribuição uniforme entre -10 e 10
 epsilon = np.random.normal(0, 2, N)  # Ruído gaussiano com média 0 e desvio 2

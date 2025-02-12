@@ -70,7 +70,7 @@ for epoch in range(num_epochs):
     train_accuracies.append(correct_train / total_train)
 
     # Validação
-    mdel.eval()
+    model.eval()
     val_loss, correct_val, total_val = 0, 0, 0
 
     with torch.no_grad():

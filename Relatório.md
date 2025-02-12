@@ -3,7 +3,7 @@
 **Professor:** Amaurí Holanda
 ### **Dupla:**
 **Aluno:** Francisco Aldenor Silva Neto  
-**Aluno:** Isabelle Pinheiro
+**Aluno:** Isabelly Pinheiro da Costa
 
 ## Questão 1: Regressão Linear
 
