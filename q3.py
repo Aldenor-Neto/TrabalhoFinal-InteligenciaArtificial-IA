@@ -68,7 +68,7 @@ def train_model(n_hidden, epochs=100, lr=0.01):
         with torch.no_grad():
             val_loss = sum(criterion(model(X_v), y_v).item() for X_v, y_v in val_loader) / len(val_loader)
         val_losses.append(val_loss)
-
+        print("Epoch", epoch, "/", epochs)
     return model, train_losses, val_losses
 
 
