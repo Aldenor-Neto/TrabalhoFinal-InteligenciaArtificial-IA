@@ -38,8 +38,7 @@ class MLP(nn.Module):
 
 
 # Inicializar modelo, função de perda e otimizador
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = MLP().to(device)
+model = MLP()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
@@ -53,7 +52,7 @@ for epoch in range(num_epochs):
     running_loss, correct_train, total_train = 0, 0, 0
 
     for images, labels in train_loader:
-        images, labels = images.to(device), labels.to(device)
+        images, labels = images, labels
 
         optimizer.zero_grad()
         outputs = model(images)
@@ -75,7 +74,7 @@ for epoch in range(num_epochs):
 
     with torch.no_grad():
         for images, labels in valid_loader:
-            images, labels = images.to(device), labels.to(device)
+            images, labels = images, labels
             outputs = model(images)
             loss = criterion(outputs, labels)
             val_loss += loss.item()
@@ -95,7 +94,7 @@ model.eval()
 correct, total = 0, 0
 with torch.no_grad():
     for images, labels in test_loader:
-        images, labels = images.to(device), labels.to(device)
+        images, labels = images, labels
         outputs = model(images)
         _, predicted = torch.max(outputs, 1)
         total += labels.size(0)
@@ -120,7 +119,7 @@ dataiter = iter(test_loader)
 images, labels = next(dataiter)  
 
 # Imagens e previsões
-outputs = model(images.to(device))
+outputs = model(images)
 _, predicted = torch.max(outputs, 1)
 
 fig = plt.figure(figsize=(10, 5))

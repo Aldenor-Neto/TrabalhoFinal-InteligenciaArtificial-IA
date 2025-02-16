@@ -5,33 +5,114 @@
 **Aluno:** Francisco Aldenor Silva Neto  
 **Aluno:** Isabelly Pinheiro da Costa
 
-## Questão 1: Regressão Linear
+# Questão 1: Regressão Linear. 
+Implemente um modelo de regressão linear. Para isso, utilize um conjunto de dados sintético gerado com a equação:
+<p align="center">
+y = 3x + 5 + ε(1)
+</p>
+onde x segue distribuição uniforme entre -10 e 10 e ε ́e um ruído gaussiano com média zero e desvio padrão de 2.
 
-**Objetivo:**  
-Implementar um modelo de regressão linear utilizando um conjunto de dados sintético, com a equação \( y = 3x + 5 + \epsilon \), onde \( x \) segue distribuição uniforme entre -10 e 10 e \( \epsilon \) é um ruído gaussiano com média zero e desvio padrão de 2.
+Faça os seguintes passos:
 
-**Resultados:**
+1. Gere um conjunto de dados com pelo menos 100 pontos.
+```python
+N = 100
+x = np.random.uniform(-10, 10, N)  # Distribuição uniforme entre -10 e 10
+epsilon = np.random.normal(0, 2, N)  # Ruído gaussiano com média 0 e desvio 2
+y = 3 * x + 5 + epsilon  # Equação dada
 
-- **Coeficientes da Regressão Linear (Mínimos Quadrados):**  
-  \( \theta_1 = 4.8363477 \), \( \theta_2 = 2.93680725 \)
+# Convertendo para arrays 2D para regressão
+X = np.vstack((np.ones(N), x)).T  # Adicionando termo de viés
+```
+2. Divida os dados em treino (80%) e teste (20%).
+```python
+train_size = int(0.8 * N)
+X_train, X_test = X[:train_size], X[train_size:]
+y_train, y_test = y[:train_size], y[train_size:]
+```
+3. Implemente modelos de regressão linear empregando:
+  - a solução de mínimos quadrados (pseudo-inversa);
+  ```python
+  theta = np.linalg.inv(X_train.T @ X_train) @ X_train.T @ y_train
 
-- **Coeficientes da Rede Neural:**  
-  \( w = 2.9368069171905518 \), \( b = 4.8363356590271 \)
+  # Previsões no conjunto de teste
+  y_pred_pinv = X_test @ theta
+  ```
+  - uma rede neural com uma camada treinada via gradiente descendente utilizando MSE-Loss (Erro Quadrático Médio) e otimizador SGD.
+  ```python
+  # Implementação com Rede Neural
+  class LinearRegressionNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(1, 1)  # Apenas uma camada linear
 
-- **Erro Quadrático Médio (MSE):**  
-  - **Mínimos Quadrados (Pseudo-Inversa):** 3.9022  
-  - **Rede Neural:** 3.9022
+    def forward(self, x):
+        return self.linear(x)
 
-**Gráfico Gerado:**  
+  # Criando o modelo, função de perda e otimizador
+  model = LinearRegressionNN()
+  criterion = nn.MSELoss()
+  optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+  # Treinamento da Rede Neural
+  epochs = 1000
+  for epoch in range(epochs):
+      optimizer.zero_grad()
+      y_pred = model(X_train_torch)
+      loss = criterion(y_pred, y_train_torch)
+      loss.backward()
+      optimizer.step()
+
+  # Obtendo os coeficientes treinados
+  w_nn, b_nn = model.linear.weight.item(), model.linear.bias.item()
+
+  # Predições da Rede Neural
+  y_pred_nn = model(X_test_torch).detach().numpy()  
+  ```
+4. Apresente as soluções para cada um dos métodos acima.
+```python
+print("Coeficientes da regressão MSE:", theta)
+print("Coeficientes da Rede Neural: w =", w_nn, ", b =", b_nn)
+```
+Coeficientes da regressão MSE: [4.8363477  2.93680725]
+Coeficientes da Rede Neural: w = 2.9368069171905518 , b = 4.8363356590271
+
+5. Avalie o desempenho dos modelos e visualize os resultados.
+```python
+# Cálculo dos Erros Médios Quadráticos (MSE)
+mse_pinv = mean_squared_error(y_test, y_pred_pinv)
+mse_nn = mean_squared_error(y_test, y_pred_nn)
+
+print(f"MSE (Pseudo-Inversa): {mse_pinv:.4f}")
+print(f"MSE (Rede Neural): {mse_nn:.4f}")
+
+plt.scatter(x, y, label="Dados reais", alpha=0.6)
+plt.plot(x[train_size:], y_pred_pinv, label="Pseudo-Inversa", color="red")
+plt.plot(x[train_size:], y_pred_nn, label="Rede Neural", color="green", linestyle="dashed")
+plt.legend()
+plt.xlabel("x")
+plt.ylabel("y")
+plt.title("Regressão Linear: Pseudo-Inversa vs Rede Neural")
+plt.savefig("imagens/Q1-regressao_linear.png")
+plt.show()
+```
+MSE (Pseudo-Inversa): 3.9022
+MSE (Rede Neural): 3.9022
 ![Q1-regressao_linear](imagens/Q1-regressao_linear.png)  
 O gráfico mostra a comparação entre os modelos de regressão linear obtidos com a solução de mínimos quadrados e a rede neural.
 
 ---
 
-## Questão 2: Regressão Logística
+# Questão 2 - Regressão Logística para Classificação Binária. 
+Implemente um modelo de regressão logística para resolver um problema de classificação binária utilizando um conjunto de dados sintético.
 
-**Objetivo:**  
-Implementar um modelo de regressão logística para resolver um problema de classificação binária utilizando um conjunto de dados sintético.
+Faça os seguintes passos:
+1. Utilize a função make classification da biblioteca Scikit-Learn para gerar um conjunto de dados com 500 amostras, 2 variáveis preditoras e 2 classes.
+2. Divida os dados em treino (70%) e teste (30%).
+3. Implemente um modelo de regressão logística (i.e., rede neural com uma  ́unica camada de saída e ativação sigmoid).
+4. Treine o modelo utilizando gradiente descendente (versão não-estocástica) (conforme visto em sala).
+5. Avalie a acurácia no conjunto de teste e visualize a fronteira de decisão do classificador.
+
 
 **Resultados:**
 
