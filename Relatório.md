@@ -43,11 +43,11 @@ y_train, y_test = y[:train_size], y[train_size:]
   # Implementação com Rede Neural
   class LinearRegressionNN(nn.Module):
     def __init__(self):
-        super().__init__()
-        self.linear = nn.Linear(1, 1)  # Apenas uma camada linear
+      super().__init__()
+      self.linear = nn.Linear(1, 1)  # Apenas uma camada linear
 
     def forward(self, x):
-        return self.linear(x)
+      return self.linear(x)
 
   # Criando o modelo, função de perda e otimizador
   model = LinearRegressionNN()
@@ -57,11 +57,11 @@ y_train, y_test = y[:train_size], y[train_size:]
   # Treinamento da Rede Neural
   epochs = 1000
   for epoch in range(epochs):
-      optimizer.zero_grad()
-      y_pred = model(X_train_torch)
-      loss = criterion(y_pred, y_train_torch)
-      loss.backward()
-      optimizer.step()
+    optimizer.zero_grad()
+    y_pred = model(X_train_torch)
+    loss = criterion(y_pred, y_train_torch)
+    loss.backward()
+    optimizer.step()
 
   # Obtendo os coeficientes treinados
   w_nn, b_nn = model.linear.weight.item(), model.linear.bias.item()
@@ -108,8 +108,43 @@ Implemente um modelo de regressão logística para resolver um problema de class
 
 Faça os seguintes passos:
 1. Utilize a função make classification da biblioteca Scikit-Learn para gerar um conjunto de dados com 500 amostras, 2 variáveis preditoras e 2 classes.
+```python
+X, y = make_classification(n_samples=500, n_features=2, n_classes=2, n_redundant=0, random_state=42)
+```
+
 2. Divida os dados em treino (70%) e teste (30%).
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+```
+
 3. Implemente um modelo de regressão logística (i.e., rede neural com uma  ́unica camada de saída e ativação sigmoid).
+```python
+class LogisticRegressionGD:
+  def __init__(self, learning_rate=0.01, epochs=1000):
+    self.learning_rate = learning_rate
+    self.epochs = epochs
+    self.theta = None
+
+  def sigmoid(self, z):
+    return 1 / (1 + np.exp(-z))
+
+  def fit(self, X, y):
+    # Adicionando uma coluna de 1s
+    X = np.c_[np.ones(X.shape[0]), X]
+    self.theta = np.zeros(X.shape[1])
+
+    # Treinamento via Gradiente Descendente Batch
+    for _ in range(self.epochs):
+        z = X @ self.theta
+        h = self.sigmoid(z)
+        gradient = (1 / len(y)) * X.T @ (h - y)
+        self.theta -= self.learning_rate * gradient
+
+  def predict(self, X):
+    X = np.c_[np.ones(X.shape[0]), X]  
+    return (self.sigmoid(X @ self.theta) >= 0.5).astype(int)
+```
+
 4. Treine o modelo utilizando gradiente descendente (versão não-estocástica) (conforme visto em sala).
 5. Avalie a acurácia no conjunto de teste e visualize a fronteira de decisão do classificador.
 
